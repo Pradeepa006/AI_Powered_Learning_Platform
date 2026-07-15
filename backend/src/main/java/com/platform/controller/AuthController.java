@@ -13,7 +13,6 @@ import com.platform.repository.ProfileRepository;
 import com.platform.repository.UserRepository;
 import com.platform.security.CustomUserDetails;
 import com.platform.security.JwtUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,23 +29,23 @@ import java.time.LocalDate;
 @CrossOrigin(origins = "*")
 public class AuthController {
 
-    @Autowired
-    private AuthenticationManager authenticationManager;
+    private final AuthenticationManager authenticationManager;
+    private final UserRepository userRepository;
+    private final ProfileRepository profileRepository;
+    private final GamificationRepository gamificationRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtUtils jwtUtils;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private ProfileRepository profileRepository;
-
-    @Autowired
-    private GamificationRepository gamificationRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private JwtUtils jwtUtils;
+    public AuthController(AuthenticationManager authenticationManager, UserRepository userRepository,
+            ProfileRepository profileRepository, GamificationRepository gamificationRepository,
+            PasswordEncoder passwordEncoder, JwtUtils jwtUtils) {
+        this.authenticationManager = authenticationManager;
+        this.userRepository = userRepository;
+        this.profileRepository = profileRepository;
+        this.gamificationRepository = gamificationRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtUtils = jwtUtils;
+    }
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@RequestBody SignupRequest signupRequest) {
@@ -167,7 +166,8 @@ public class AuthController {
 
     /**
      * Google OAuth Callback
-     * Called by the Next.js frontend after Google authenticates the user via NextAuth.
+     * Called by the Next.js frontend after Google authenticates the user via
+     * NextAuth.
      * Finds-or-creates the user in the DB, then issues our own JWT.
      */
     @PostMapping("/google-callback")
@@ -184,9 +184,9 @@ public class AuthController {
             user = User.builder()
                     .name(request.getName() != null ? request.getName() : request.getEmail())
                     .email(request.getEmail())
-                    .password(null)                  // No password for OAuth users
-                    .role(Role.STUDENT)              // Default role for Google sign-in
-                    .emailVerified(true)             // Google has verified the email
+                    .password(null) // No password for OAuth users
+                    .role(Role.STUDENT) // Default role for Google sign-in
+                    .emailVerified(true) // Google has verified the email
                     .profilePhoto(request.getPicture())
                     .oauthProvider("GOOGLE")
                     .oauthId(request.getGoogleId())

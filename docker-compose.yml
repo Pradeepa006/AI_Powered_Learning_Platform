@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  platform-db:
+    image: postgres:15-alpine
+    container_name: platform-db
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: platform_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  platform-redis:
+    image: redis:7-alpine
+    container_name: platform-redis
+    restart: always
+    ports:
+      - "6379:6379"
+
+  platform-backend:
+    build: ./backend
+    container_name: platform-backend
+    restart: always
+    ports:
+      - "8080:8080"
+    environment:
+      - DATABASE_URL=jdbc:postgresql://platform-db:5432/platform_db
+      - DATABASE_USERNAME=postgres
+      - DATABASE_PASSWORD=postgres
+      - REDIS_HOST=platform-redis
+      - REDIS_PORT=6379
+      - JWT_SECRET=407f342782e4d2a1b5c468eef0a811c750b2984577884a441e88029584482d33458428a2a8e83344
+      - OPENAI_API_KEY=mock-key-for-local-testing
+      # ── REPLACE with your real Google OAuth keys ──
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID:-your-google-client-id-here}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET:-your-google-client-secret-here}
+    depends_on:
+      - platform-db
+      - platform-redis
+
+  platform-frontend:
+    build: ./frontend
+    container_name: platform-frontend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://platform-backend:8080/api
+      # NextAuth configuration
+      - NEXTAUTH_URL=http://localhost:3000
+      - NEXTAUTH_SECRET=luminalearnsecret2026xK9mPqR7vWnAjB4cD8eF1gH
+      # ── REPLACE with your real Google OAuth keys ──
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID:-your-google-client-id-here}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET:-your-google-client-secret-here}
+    depends_on:
+      - platform-backend
+
+volumes:
+  postgres_data:

@@ -47,6 +47,7 @@ public class User {
     @Column(name = "oauth_id")
     private String oauthId;
 
+    @Column(name = "email_verified")
     private boolean emailVerified;
 
     @OneToMany(mappedBy = "student")

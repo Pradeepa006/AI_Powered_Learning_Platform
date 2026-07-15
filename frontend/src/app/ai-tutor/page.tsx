@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { Suspense, useState, useEffect } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/redux/store';
@@ -13,6 +13,14 @@ import api from '@/utils/api';
 import Link from 'next/link';
 
 export default function AiSandboxCenter() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-[#030308] text-gray-100" />}>
+      <AiSandboxCenterContent />
+    </Suspense>
+  );
+}
+
+function AiSandboxCenterContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { isAuthenticated } = useSelector((state: RootState) => state.auth);

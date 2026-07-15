@@ -1,6 +1,6 @@
-# LuminaLearn: AI-Powered Online Learning Platform
+# Nova Learn
 
-LuminaLearn is a Next-Generation Online Learning Platform designed to provide a highly interactive, personalized, and gamified study ecosystem far beyond traditional structures (Udemy/Coursera).
+Nova Learn is a Next-Generation Online Learning Platform designed to provide a highly interactive, personalized, and gamified study ecosystem far beyond traditional structures (Udemy/Coursera).
 
 ## 🚀 Advanced Features
 

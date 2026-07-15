@@ -1,0 +1,59 @@
+spring:
+  application:
+    name: learning-platform
+  datasource:
+    url: ${DATABASE_URL:jdbc:h2:mem:platform_db;MODE=PostgreSQL;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE}
+    username: ${DATABASE_USERNAME:postgres}
+    password: ${DATABASE_PASSWORD:postgres}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+    show-sql: false
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+  mail:
+    host: ${SMTP_HOST:smtp.gmail.com}
+    port: ${SMTP_PORT:587}
+    username: ${SMTP_USERNAME:mock@gmail.com}
+    password: ${SMTP_PASSWORD:mock_password}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+server:
+  port: ${PORT:8080}
+
+app:
+  ai:
+    provider: ${AI_PROVIDER:gemini}
+  security:
+    jwt:
+      secret: ${JWT_SECRET:407f342782e4d2a1b5c468eef0a811c750b2984577884a441e88029584482d33458428a2a8e83344}
+      expiration-ms: ${JWT_EXPIRATION_MS:86400000} # 24 hours
+      refresh-expiration-ms: ${JWT_REFRESH_EXPIRATION_MS:604800000} # 7 days
+  openai:
+    api-key: ${OPENAI_API_KEY:mock-key-for-local-testing}
+    model: ${OPENAI_MODEL:gpt-4o-mini}
+  gemini:
+    api-key: ${GEMINI_API_KEY:}
+    model: ${GEMINI_MODEL:gemini-1.5-flash}
+  payment:
+    stripe:
+      api-key: ${STRIPE_API_KEY:mock_stripe_key}
+      webhook-secret: ${STRIPE_WEBHOOK_SECRET:mock_stripe_webhook}
+    razorpay:
+      key-id: ${RAZORPAY_KEY_ID:mock_razorpay_id}
+      key-secret: ${RAZORPAY_KEY_SECRET:mock_razorpay_secret}
+  # Google OAuth configuration
+  # Set GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in your environment or .env file
+  google:
+    client-id: ${GOOGLE_CLIENT_ID:your-google-client-id-here}
+    client-secret: ${GOOGLE_CLIENT_SECRET:your-google-client-secret-here}

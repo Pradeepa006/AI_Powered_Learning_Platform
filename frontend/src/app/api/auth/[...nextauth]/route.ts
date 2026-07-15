@@ -15,7 +15,7 @@ import axios from 'axios';
 
 const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
 
-const handler = NextAuth({
+const { handlers } = NextAuth({
   providers: [
     GoogleProvider({
       // ────────────────────────────────────────────────
@@ -88,4 +88,4 @@ const handler = NextAuth({
   },
 });
 
-export { handler as GET, handler as POST };
+export const { GET, POST } = handlers;

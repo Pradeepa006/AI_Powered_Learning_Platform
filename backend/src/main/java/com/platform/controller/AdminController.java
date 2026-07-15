@@ -1,9 +1,15 @@
 package com.platform.controller;
 
 import com.platform.model.*;
-import com.platform.repository.*;
+import com.platform.repository.CertificateRepository;
+import com.platform.repository.CourseRepository;
+import com.platform.repository.EnrollmentRepository;
+import com.platform.repository.GamificationRepository;
+import com.platform.repository.LessonRepository;
+import com.platform.repository.PaymentRepository;
+import com.platform.repository.QuizRepository;
+import com.platform.repository.UserRepository;
 import com.platform.security.CustomUserDetails;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -17,29 +23,28 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = "*")
 public class AdminController {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final CourseRepository courseRepository;
+    private final EnrollmentRepository enrollmentRepository;
+    private final PaymentRepository paymentRepository;
+    private final CertificateRepository certificateRepository;
+    private final LessonRepository lessonRepository;
+    private final GamificationRepository gamificationRepository;
+    private final QuizRepository quizRepository;
 
-    @Autowired
-    private CourseRepository courseRepository;
-
-    @Autowired
-    private EnrollmentRepository enrollmentRepository;
-
-    @Autowired
-    private PaymentRepository paymentRepository;
-
-    @Autowired
-    private CertificateRepository certificateRepository;
-
-    @Autowired
-    private LessonRepository lessonRepository;
-
-    @Autowired
-    private GamificationRepository gamificationRepository;
-
-    @Autowired
-    private QuizRepository quizRepository;
+    public AdminController(UserRepository userRepository, CourseRepository courseRepository,
+            EnrollmentRepository enrollmentRepository, PaymentRepository paymentRepository,
+            CertificateRepository certificateRepository, LessonRepository lessonRepository,
+            GamificationRepository gamificationRepository, QuizRepository quizRepository) {
+        this.userRepository = userRepository;
+        this.courseRepository = courseRepository;
+        this.enrollmentRepository = enrollmentRepository;
+        this.paymentRepository = paymentRepository;
+        this.certificateRepository = certificateRepository;
+        this.lessonRepository = lessonRepository;
+        this.gamificationRepository = gamificationRepository;
+        this.quizRepository = quizRepository;
+    }
 
     /**
      * Get platform-wide analytics summary.

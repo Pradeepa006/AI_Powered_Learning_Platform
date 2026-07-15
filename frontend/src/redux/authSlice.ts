@@ -1,104 +1,56 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-interface UserState {
-  id: number | null;
-  name: string | null;
-  email: string | null;
-  role: string | null;
-  xpPoints: number;
-  currentStreak: number;
-  bio?: string;
-  title?: string;
-  profilePhoto?: string;
-  skills?: string;
+export interface AuthUser {
+    id: string;
+    email: string;
+    name: string;
+    role: 'STUDENT' | 'INSTRUCTOR' | 'ADMIN';
 }
 
 interface AuthState {
-  user: UserState | null;
-  token: string | null;
-  isAuthenticated: boolean;
+    isAuthenticated: boolean;
+    user: AuthUser | null;
 }
 
-const readStoredUser = (userJson: string | null): UserState | null => {
-  if (!userJson || userJson === 'undefined' || userJson === 'null') {
-    return null;
-  }
+const AUTH_STORAGE_KEY = 'mock_auth_user';
 
-  try {
-    return JSON.parse(userJson) as UserState;
-  } catch {
-    return null;
-  }
-};
-
-const getInitialState = (): AuthState => {
-  if (typeof window !== 'undefined') {
-    const token = localStorage.getItem('token');
-    const userJson = localStorage.getItem('user');
-    const storedUser = readStoredUser(userJson);
-
-    if (token && storedUser) {
-      return {
-        user: storedUser,
-        token,
-        isAuthenticated: true,
-      };
+function loadInitialUser(): AuthUser | null {
+    if (typeof window === 'undefined') return null;
+    try {
+        const raw = localStorage.getItem(AUTH_STORAGE_KEY);
+        return raw ? (JSON.parse(raw) as AuthUser) : null;
+    } catch {
+        return null;
     }
+}
 
-    if (userJson && !storedUser) {
-      localStorage.removeItem('user');
-    }
+const initialUser = loadInitialUser();
 
-    if (!token) {
-      localStorage.removeItem('token');
-    }
-  }
-  return {
-    user: null,
-    token: null,
-    isAuthenticated: false,
-  };
+const initialState: AuthState = {
+    isAuthenticated: !!initialUser,
+    user: initialUser,
 };
 
 const authSlice = createSlice({
-  name: 'auth',
-  initialState: getInitialState(),
-  reducers: {
-    setCredentials: (
-      state,
-      action: PayloadAction<{ user: UserState; token: string }>
-    ) => {
-      state.user = action.payload.user;
-      state.token = action.payload.token;
-      state.isAuthenticated = true;
-      if (typeof window !== 'undefined') {
-        localStorage.setItem('token', action.payload.token);
-        localStorage.setItem('user', JSON.stringify(action.payload.user));
-      }
+    name: 'auth',
+    initialState,
+    reducers: {
+        login: (state, action: PayloadAction<AuthUser>) => {
+            state.isAuthenticated = true;
+            state.user = action.payload;
+            if (typeof window !== 'undefined') {
+                localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(action.payload));
+            }
+        },
+        logout: (state) => {
+            state.isAuthenticated = false;
+            state.user = null;
+            if (typeof window !== 'undefined') {
+                localStorage.removeItem(AUTH_STORAGE_KEY);
+            }
+        },
     },
-    updateXpAndStreak: (
-      state,
-      action: PayloadAction<{ xpPoints: number; currentStreak: number }>
-    ) => {
-      if (state.user) {
-        state.user.xpPoints = action.payload.xpPoints;
-        state.user.currentStreak = action.payload.currentStreak;
-        if (typeof window !== 'undefined') {
-          localStorage.setItem('user', JSON.stringify(state.user));
-        }
-      }
-    },
-    logout: (state) => {
-      state.user = null;
-      state.token = null;
-      state.isAuthenticated = false;
-      if (typeof window !== 'undefined') {
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
-      }
-    },
-  },
 });
 
-export const { setCredentials, updateXpAndStreak, logout } = authSlice.actions;
+export const { login, logout } = authSlice.actions;
 export default authSlice.reducer;

@@ -1,21 +1,10 @@
 import type { Metadata } from "next";
-import { Outfit, Inter } from "next/font/google";
 import "./globals.css";
 import Providers from "./Providers";
 
-const outfit = Outfit({
-  subsets: ["latin"],
-  variable: "--font-outfit",
-});
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-});
-
 export const metadata: Metadata = {
-  title: "Lumina Learn | Next-Gen AI-Powered Learning Platform",
-  description: "Experience the next-generation Udemy, featuring personalized AI Tutors, code playground compiler, resume ATS scorer, mock interview feedback, and gamified streak rewards.",
+  title: "Nova Learn | AI-Powered Learning Platform",
+  description: "Experience a next-generation learning platform with personalized AI Tutors, code playgrounds, resume analysis, mock interviews, and gamified rewards.",
 };
 
 export default function RootLayout({
@@ -24,7 +13,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${outfit.variable} ${inter.variable}`}>
+    <html lang="en" suppressHydrationWarning>
       <body className="bg-black text-gray-100 min-h-screen selection:bg-purple-600 selection:text-white">
         <Providers>
           {children}
