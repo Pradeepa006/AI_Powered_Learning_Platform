@@ -47,7 +47,7 @@ export default function StudentDashboard() {
     api.get('/auth/me')
       .then(res => {
         setProfile(res.data);
-        dispatch(login({ user: res.data, token: localStorage.getItem('token') || '' })); // Use login action
+        dispatch(login(res.data)); // Use login action
       })
       .catch(() => { });
 
