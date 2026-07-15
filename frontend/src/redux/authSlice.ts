@@ -5,6 +5,8 @@ export interface AuthUser {
     email: string;
     name: string;
     role: 'STUDENT' | 'INSTRUCTOR' | 'ADMIN';
+    currentStreak?: number;
+    xpPoints?: number;
 }
 
 interface AuthState {

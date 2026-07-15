@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '@/redux/store';
-import { logout, login } from '@/redux/authSlice'; // Import login action instead of setCredentials
+import { logout, login, AuthUser } from '@/redux/authSlice'; // Import login action instead of setCredentials
 import {
   Sparkles, Award, Zap, Brain, Play, Shield,
   Terminal, User, BookOpen, Star, LogOut, CheckCircle, FileText, Code,
@@ -13,14 +13,23 @@ import {
 import api from '@/utils/api';
 import Link from 'next/link';
 
+interface EnrolledCourse {
+  courseId: string;
+  isCompleted: boolean;
+  title: string;
+  instructor: string;
+  thumbnailUrl?: string;
+  progressPercentage: number;
+}
+
 export default function StudentDashboard() {
   const router = useRouter();
   const dispatch = useDispatch();
   const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
 
-  const [enrolledCourses, setEnrolledCourses] = useState<any[]>([]);
+  const [enrolledCourses, setEnrolledCourses] = useState<EnrolledCourse[]>([]);
   const [loading, setLoading] = useState(true);
-  const [profile, setProfile] = useState<any>(null);
+  const [profile, setProfile] = useState<AuthUser | null>(null);
   const [isClient, setIsClient] = useState(false); // New state for client-side rendering
 
   // Dashboard Tabs
