@@ -21,12 +21,25 @@ import Features from '@/components/landing/Features';
 import CourseListSkeleton from '@/components/CourseListSkeleton';
 import EmptyState from '@/components/EmptyState';
 
+interface Course {
+  id: number;
+  thumbnailUrl?: string;
+  title: string;
+  price?: number;
+  discountPrice?: number;
+  category: string;
+  subtitle: string;
+  difficulty: string;
+  language: string;
+  averageRating?: number;
+}
+
 export default function LandingPage() {
   const dispatch = useDispatch();
   const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
   const { data: session } = useSession();
 
-  const [courses, setCourses] = useState<any[]>([]);
+  const [courses, setCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [showAuthModal, setShowAuthModal] = useState(false);
@@ -71,18 +84,15 @@ export default function LandingPage() {
   // When a Google OAuth session arrives from NextAuth, sync it into Redux
   useEffect(() => {
     if (session && (session as any).backendJwt && !isAuthenticated) {
-      dispatch(login({ // Changed setCredentials to login
-        token: (session as any).backendJwt, // This token is still correct
-        user: {
-          id: (session as any).userId,
-          name: session.user?.name || '',
-          email: session.user?.email || '',
-          role: (session as any).userRole || 'STUDENT',
-          xpPoints: 0,
-          currentStreak: 0,
-          profilePhoto: session.user?.image || undefined,
-        },
-      })); // This line needs to be changed to dispatch(login(...))
+      dispatch(login({
+        id: (session as any).userId,
+        name: session.user?.name || '',
+        email: session.user?.email || '',
+        role: (session as any).userRole || 'STUDENT',
+        xpPoints: 0,
+        currentStreak: 0,
+        profilePhoto: session.user?.image || undefined,
+      }));
       setShowAuthModal(false);
     }
   }, [session, isAuthenticated, dispatch]);
@@ -109,15 +119,12 @@ export default function LandingPage() {
     // --- TEMPORARY: Allow all users to log in for testing purposes ---
     if (process.env.NEXT_PUBLIC_TEST_MODE === 'true') {
       console.warn("TEST_MODE enabled: Bypassing actual authentication for testing.");
-      dispatch(login({ // Changed setCredentials to login
-        token: 'mock-jwt-token-for-testing',
-        user: {
-          id: 'test-user-id',
-          name: name || email.split('@')[0] || 'Test User', // Use provided name/email or default
-          email: email || 'test@example.com',
-          role: role || 'STUDENT', // Or 'INSTRUCTOR' if needed for testing instructor features
-          xpPoints: 100, currentStreak: 5, profilePhoto: undefined,
-        },
+      dispatch(login({
+        id: 'test-user-id',
+        name: name || email.split('@')[0] || 'Test User', // Use provided name/email or default
+        email: email || 'test@example.com',
+        role: role as 'STUDENT' | 'INSTRUCTOR' | 'ADMIN', // Or 'INSTRUCTOR' if needed for testing instructor features
+        xpPoints: 100, currentStreak: 5, profilePhoto: undefined,
       }));
       setShowAuthModal(false);
       return; // Exit early if in test mode
@@ -185,7 +192,7 @@ export default function LandingPage() {
           courses.length > 0 ? (
             <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {(showAllCourses ? courses : courses.slice(0, 6)).map((course: any) => (
+              {(showAllCourses ? courses : courses.slice(0, 6)).map((course) => (
                 <Link key={course.id} href={isAuthenticated ? `/course/${course.id}` : '#'} onClick={() => !isAuthenticated && setShowAuthModal(true)}>
                   <div className="rounded-2xl glass-card overflow-hidden group hover:border-purple-500/20 transition duration-300 flex flex-col relative h-full">
                     <div className="h-44 relative bg-gray-900 overflow-hidden" style={{ position: 'relative' }}>

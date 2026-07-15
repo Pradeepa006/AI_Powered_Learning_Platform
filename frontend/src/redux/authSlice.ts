@@ -7,6 +7,7 @@ export interface AuthUser {
     role: 'STUDENT' | 'INSTRUCTOR' | 'ADMIN';
     currentStreak?: number;
     xpPoints?: number;
+    profilePhoto?: string;
 }
 
 interface AuthState {
