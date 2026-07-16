@@ -60,15 +60,3 @@ npm run dev
 ```
 
 ---
-
-## 🔑 Seeding & Default Credentials
-
-The platform includes a database seeder that auto-populates mock users, badges, and comprehensive course modules upon boot:
-
-* **Student Account**:
-  * Email: `student@platform.com`
-  * Password: `password`
-* **Instructor Account**:
-  * Email: `instructor@platform.com`
-  * Password: `password`
-* **General OTP Bypass**: `123456`
